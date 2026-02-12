@@ -2,7 +2,9 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>위창 오빠에게 💝</title>
     <style>
         * {
@@ -12,21 +14,24 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ffeef8 0%, #ffe8f5 50%, #ffd4ed 100%);
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow-x: hidden;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 30px;
-            padding: 50px;
+            padding: 30px 20px;
             max-width: 600px;
-            width: 90%;
+            width: 92%;
             box-shadow: 0 20px 60px rgba(255, 182, 193, 0.3);
             position: relative;
             overflow: hidden;
@@ -35,9 +40,9 @@
         .container::before {
             content: '💕';
             position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 3rem;
+            top: 15px;
+            right: 15px;
+            font-size: 2rem;
             opacity: 0.3;
         }
 
@@ -64,16 +69,16 @@
         h1 {
             color: #ff69b4;
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
             text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.2);
         }
 
         .subtitle {
             text-align: center;
             color: #ff8fab;
-            margin-bottom: 40px;
-            font-size: 1.2rem;
+            margin-bottom: 25px;
+            font-size: 1rem;
         }
 
         button {
@@ -96,9 +101,9 @@
         }
 
         .question {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             color: #ff69b4;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-align: center;
             font-weight: bold;
         }
@@ -106,18 +111,18 @@
         .options {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
         }
 
         .option {
             background: white;
             border: 3px solid #ffb6c1;
-            padding: 15px 25px;
+            padding: 12px 20px;
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .option:hover {
@@ -139,12 +144,12 @@
 
         .message {
             background: #fff0f5;
-            padding: 20px;
+            padding: 15px;
             border-radius: 15px;
-            margin: 20px 0;
+            margin: 15px 0;
             text-align: center;
             color: #ff69b4;
-            font-size: 1.2rem;
+            font-size: 1rem;
             border: 2px dashed #ffb6c1;
         }
 
@@ -176,10 +181,11 @@
             background: white;
             border: 3px solid #ffb6c1;
             border-radius: 20px;
-            padding: 30px;
-            min-height: 300px;
+            padding: 20px;
+            min-height: 250px;
             position: relative;
-            margin: 20px 0;
+            margin: 15px 0;
+            touch-action: manipulation;
         }
 
         .clickable-heart {
@@ -188,6 +194,7 @@
             cursor: pointer;
             transition: transform 0.2s ease;
             animation: float 2s ease-in-out infinite;
+            padding: 10px;
         }
 
         .clickable-heart:hover {
@@ -201,15 +208,15 @@
 
         .score {
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             color: #ff69b4;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-weight: bold;
         }
 
         .letter {
             background: #fff9fc;
-            padding: 40px;
+            padding: 30px 20px;
             border-radius: 20px;
             border: 3px solid #ffb6c1;
             position: relative;
@@ -225,7 +232,7 @@
         }
 
         .letter-content {
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: #ff69b4;
             text-align: center;
             line-height: 1.8;
@@ -252,8 +259,8 @@
 
         .emoji-decoration {
             text-align: center;
-            font-size: 3rem;
-            margin: 20px 0;
+            font-size: 2rem;
+            margin: 15px 0;
             animation: bounce 1s ease infinite;
         }
 
@@ -277,18 +284,155 @@
             outline: none;
             border-color: #ff69b4;
         }
+
+        /* 편지 봉투 화면 스타일 */
+        .envelope-screen-wrapper {
+            text-align: center;
+        }
+
+        .envelope-label {
+            font-size: 1.5rem;
+            color: #ff69b4;
+            margin-bottom: 30px;
+            font-weight: bold;
+            animation: pulse-text 1.5s infinite;
+        }
+
+        @keyframes pulse-text {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .envelope {
+            width: 200px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.2));
+        }
+
+        .envelope:hover {
+            transform: scale(1.1) translateY(-10px);
+        }
+
+        .envelope:active {
+            animation: open-envelope 0.6s ease;
+        }
+
+        @keyframes open-envelope {
+            0% { transform: rotateX(0deg); }
+            50% { transform: rotateX(20deg); }
+            100% { transform: rotateX(0deg); }
+        }
+
+        /* 편지 내용 */
+        .envelope-letter {
+            background: linear-gradient(135deg, #ffb6d9 0%, #ffc9e3 100%);
+            border: 6px solid #c1272d;
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: letter-pop 0.6s ease;
+        }
+
+        @keyframes letter-pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .letter-header {
+            font-size: 1.6rem;
+            color: #c1272d;
+            font-weight: bold;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .cat {
+            width: 150px;
+            margin: 15px auto;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+            animation: cat-wave 2s ease-in-out infinite;
+        }
+
+        @keyframes cat-wave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .letter-text {
+            font-size: 1.1rem;
+            color: #333;
+            margin: 20px 0;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .yes-btn {
+            background: linear-gradient(135deg, #ffb6d9 0%, #ff69b4 100%);
+            color: white;
+        }
+
+        .yes-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+        }
+
+        .no-btn {
+            background: white;
+            color: #333;
+            border: 2px solid #ddd;
+            position: relative;
+        }
+
+        .no-btn:hover {
+            transform: translateX(50px);
+            background: #f5f5f5;
+        }
     </style>
 </head>
 <body>
     <div class="heart-container" id="heartContainer"></div>
     
     <div class="container">
-        <!-- 시작 화면 -->
-        <div id="startScreen" class="screen active">
-            <h1>💝 위창 오빠에게 💝</h1>
-            <div class="emoji-decoration">🎀✨💕</div>
-            <div class="subtitle">우리만의 특별한 추억 퀴즈</div>
-            <button onclick="startQuiz()">시작하기 💖</button>
+        <!-- 시작 화면: 편지 봉투 -->
+        <div id="envelopeScreen" class="screen active">
+            <div class="envelope-screen-wrapper">
+                <p class="envelope-label">클릭해서 열어보세요 💌</p>
+                <img id="envelope" src="envelope.png" alt="편지 봉투" class="envelope">
+            </div>
+        </div>
+
+        <!-- 편지 화면 -->
+        <div id="letterScreen" class="screen">
+            <div class="envelope-letter">
+                <div class="letter-header">LOVE 💌 YOU</div>
+                <img id="catImage" src="cat_dance.gif" alt="고양이" class="cat">
+                <p id="letterMessage" class="letter-text">너에게 특별한 질문이 있어...</p>
+                <div id="letterButtons" class="button-group">
+                    <button class="btn yes-btn" id="yesBtn">YES 💖</button>
+                    <button class="btn no-btn" id="noBtn">NO</button>
+                </div>
+            </div>
         </div>
 
         <!-- 퀴즈 화면 -->
@@ -308,7 +452,7 @@
         </div>
 
         <!-- 최종 편지 화면 -->
-        <div id="letterScreen" class="screen">
+        <div id="finalLetterScreen" class="screen">
             <div class="letter">
                 <div class="letter-content" id="letterContent"></div>
             </div>
@@ -317,6 +461,7 @@
     </div>
 
     <script>
+        // === 상태 관리 ===
         const quiz = [
             {
                 question: "우리가 처음 만난 날은? 🌸",
@@ -327,7 +472,7 @@
                     "2025년 8월 1일"
                 ],
                 correct: 1,
-                message: "맞아! 그날이 우리의 시작이었어 💕"
+                message: "Are you 천재? 정답💕"
             },
             {
                 question: "우리가 사귀기 시작한 날은? 💑",
@@ -338,7 +483,7 @@
                     "2025년 8월 5일"
                 ],
                 correct: 2,
-                message: "그날 정말 행복했어! 💖"
+                message: "우히히히💖"
             },
             {
                 question: "내가 좋아하는 초콜릿은? 🍫",
@@ -349,20 +494,65 @@
                     "킷캣"
                 ],
                 correct: 1,
-                message: "오빠가 기억해줘서 너무 좋아! 🥰"
+                message: "정답입니다아앙🥰"
             }
         ];
 
         let currentQuestion = 0;
         let gameHearts = 0;
         const maxGameHearts = 10;
+        let noClickCount = 0;
 
-        function startQuiz() {
-            document.getElementById('startScreen').classList.remove('active');
-            document.getElementById('quizScreen').classList.add('active');
-            showQuestion();
+        // === 화면 전환 함수 ===
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
         }
 
+        // === 편지 봉투 클릭 ===
+        document.getElementById('envelope').addEventListener('click', () => {
+            showScreen('letterScreen');
+            createHearts();
+        });
+
+        // === YES 버튼 ===
+        document.getElementById('yesBtn').addEventListener('click', () => {
+            document.getElementById('letterButtons').style.display = 'none';
+            document.getElementById('letterMessage').textContent = '좋아! 그럼 우리 퀴즈 시작할까? 💕';
+            document.getElementById('catImage').src = 'cat_heart.gif';
+            
+            setTimeout(() => {
+                currentQuestion = 0;
+                showScreen('quizScreen');
+                showQuestion();
+            }, 1500);
+        });
+
+        // === NO 버튼: 도망 효과 (터치 대응) ===
+        document.getElementById('noBtn').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            dodgeNoButton();
+        });
+        function dodgeNoButton() {
+            noClickCount++;
+            const randomX = (Math.random() - 0.5) * 200;
+            const randomY = (Math.random() - 0.5) * 150;
+
+            const noBtn = document.getElementById('noBtn');
+            noBtn.style.position = 'relative';
+            noBtn.style.transition = 'all 0.3s ease';
+            noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+
+            if (noClickCount > 5) {
+                document.getElementById('letterMessage').textContent = '😔 혹시 싫은 건 아닐까?';
+            }
+        }
+
+        document.getElementById('noBtn').addEventListener('mouseover', dodgeNoButton);
+
+        // === 퀴즈 함수 ===
         function showQuestion() {
             const q = quiz[currentQuestion];
             document.getElementById('progress').textContent = `문제 ${currentQuestion + 1} / ${quiz.length}`;
@@ -409,6 +599,7 @@
             }
         }
 
+        // === 하트 생성 ===
         function createHearts() {
             const container = document.getElementById('heartContainer');
             for (let i = 0; i < 15; i++) {
@@ -423,10 +614,11 @@
             }
         }
 
+        // === 게임 시작 ===
         function startMiniGame() {
-            document.getElementById('quizScreen').classList.remove('active');
-            document.getElementById('gameScreen').classList.add('active');
-            
+            gameHearts = 0;
+            showScreen('gameScreen');
+            document.getElementById('score').textContent = `클릭한 하트: 0 / ${maxGameHearts}`;
             spawnGameHeart();
         }
 
@@ -455,9 +647,9 @@
             gameArea.appendChild(heart);
         }
 
+        // === 최종 편지 ===
         function showLetter() {
-            document.getElementById('gameScreen').classList.remove('active');
-            document.getElementById('letterScreen').classList.add('active');
+            showScreen('finalLetterScreen');
             
             const text = "사랑해!";
             const letterContent = document.getElementById('letterContent');
@@ -478,9 +670,9 @@
             }, 200);
         }
 
-        // 초기 하트 애니메이션
+        // === 초기 애니메이션 ===
         setInterval(() => {
-            if (document.getElementById('startScreen').classList.contains('active')) {
+            if (document.getElementById('envelopeScreen').classList.contains('active')) {
                 createHearts();
             }
         }, 3000);
