@@ -6,6 +6,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>위창 오빠에게 💝</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,7 +17,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Gamja Flower', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ffeef8 0%, #ffe8f5 50%, #ffd4ed 100%);
             min-height: 100vh;
             min-height: -webkit-fill-available;
@@ -177,43 +180,6 @@
             }
         }
 
-        .game-area {
-            background: white;
-            border: 3px solid #ffb6c1;
-            border-radius: 20px;
-            padding: 20px;
-            min-height: 250px;
-            position: relative;
-            margin: 15px 0;
-            touch-action: manipulation;
-        }
-
-        .clickable-heart {
-            position: absolute;
-            font-size: 2.5rem;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            animation: float 2s ease-in-out infinite;
-            padding: 10px;
-        }
-
-        .clickable-heart:hover {
-            transform: scale(1.2);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .score {
-            text-align: center;
-            font-size: 1.2rem;
-            color: #ff69b4;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-
         .letter {
             background: #fff9fc;
             padding: 30px 20px;
@@ -232,12 +198,13 @@
         }
 
         .letter-content {
-            font-size: 2rem;
-            color: #ff69b4;
+            font-size: 1.4rem;
+            color: #d4456a;
             text-align: center;
             line-height: 1.8;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.2);
+            text-shadow: none;
+            white-space: pre-line;
         }
 
         .typing {
@@ -417,7 +384,7 @@
         <!-- 시작 화면: 편지 봉투 -->
         <div id="envelopeScreen" class="screen active">
             <div class="envelope-screen-wrapper">
-                <p class="envelope-label">클릭해서 열어보세요 💌</p>
+                <p class="envelope-label">클릭해서 열어보세요💌</p>
                 <img id="envelope" src="envelope.png" alt="편지 봉투" class="envelope">
             </div>
         </div>
@@ -425,9 +392,9 @@
         <!-- 편지 화면 -->
         <div id="letterScreen" class="screen">
             <div class="envelope-letter">
-                <div class="letter-header">LOVE 💌 YOU</div>
+                <div class="letter-header">Happy Valentine's Day Wechang!!💌</div>
                 <img id="catImage" src="cat_dance.gif" alt="고양이" class="cat">
-                <p id="letterMessage" class="letter-text">너에게 특별한 질문이 있어...</p>
+                <p id="letterMessage" class="letter-text">"Will you be my Valentine?"</p>
                 <div id="letterButtons" class="button-group">
                     <button class="btn yes-btn" id="yesBtn">YES 💖</button>
                     <button class="btn no-btn" id="noBtn">NO</button>
@@ -441,14 +408,6 @@
             <div class="question" id="question"></div>
             <div class="options" id="options"></div>
             <div id="feedback"></div>
-        </div>
-
-        <!-- 미니게임 화면 -->
-        <div id="gameScreen" class="screen">
-            <h1>💕 하트 클릭 게임 💕</h1>
-            <div class="score" id="score">클릭한 하트: 0 / 10</div>
-            <div class="subtitle">떨어지는 하트를 모두 클릭하세요!</div>
-            <div class="game-area" id="gameArea"></div>
         </div>
 
         <!-- 최종 편지 화면 -->
@@ -499,8 +458,6 @@
         ];
 
         let currentQuestion = 0;
-        let gameHearts = 0;
-        const maxGameHearts = 10;
         let noClickCount = 0;
 
         // === 화면 전환 함수 ===
@@ -530,27 +487,62 @@
             }, 1500);
         });
 
-        // === NO 버튼: 도망 효과 (터치 대응) ===
-        document.getElementById('noBtn').addEventListener('touchstart', (e) => {
+        // === NO 버튼: 도망 효과 (모바일 터치 전용) ===
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+
+        function dodgeNoButton() {
+            noClickCount++;
+            const container = noBtn.closest('.envelope-letter');
+            const rect = container.getBoundingClientRect();
+
+            // 컨테이너 안에서 랜덤 위치로 순간이동
+            const maxX = rect.width - 80;
+            const maxY = rect.height - 50;
+            const newX = (Math.random() - 0.5) * maxX;
+            const newY = (Math.random() - 0.5) * maxY;
+
+            noBtn.style.position = 'relative';
+            noBtn.style.transition = 'all 0.15s ease';
+            noBtn.style.zIndex = '10';
+
+            // 점점 작아지기
+            const scale = Math.max(0.4, 1 - noClickCount * 0.06);
+            noBtn.style.transform = `translate(${newX}px, ${newY}px) scale(${scale})`;
+
+            // YES 버튼은 점점 커지기
+            const yesScale = Math.min(1.5, 1 + noClickCount * 0.05);
+            yesBtn.style.transition = 'all 0.3s ease';
+            yesBtn.style.transform = `scale(${yesScale})`;
+
+            // 메시지 변경
+            const messages = [
+                '"Will you be my Valentine?"',
+                '"Will you be my Valentine?"',
+                '싫으면 No를 어디 한번 눌러보시게 😏',
+                '진짜 누를 수 있을까~? 🤭',
+                '포기해~ YES 누르자~ 💕',
+                '거의 다 왔다!! ...아 아직 멀었다 ㅋㅋ',
+                '오빠 그냥 YES 눌러 ㅋㅋㅋ 💖',
+                '아직도 포기 안 해?! 😂',
+                '오빠 나 슬퍼지려고 해... 🥺',
+                'YES 말고는 답이 없어~ 💝'
+            ];
+            const msgIndex = Math.min(noClickCount, messages.length - 1);
+            document.getElementById('letterMessage').textContent = messages[msgIndex];
+        }
+
+        // 터치: touchstart + click 둘 다 처리
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            dodgeNoButton();
+        }, { passive: false });
+        noBtn.addEventListener('click', (e) => {
             e.preventDefault();
             dodgeNoButton();
         });
-        function dodgeNoButton() {
-            noClickCount++;
-            const randomX = (Math.random() - 0.5) * 200;
-            const randomY = (Math.random() - 0.5) * 150;
-
-            const noBtn = document.getElementById('noBtn');
-            noBtn.style.position = 'relative';
-            noBtn.style.transition = 'all 0.3s ease';
-            noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
-
-            if (noClickCount > 5) {
-                document.getElementById('letterMessage').textContent = '😔 혹시 싫은 건 아닐까?';
-            }
-        }
-
-        document.getElementById('noBtn').addEventListener('mouseover', dodgeNoButton);
+        // PC: mouseover 대응
+        noBtn.addEventListener('mouseover', dodgeNoButton);
 
         // === 퀴즈 함수 ===
         function showQuestion() {
@@ -588,7 +580,7 @@
                     if (currentQuestion < quiz.length) {
                         showQuestion();
                     } else {
-                        startMiniGame();
+                        showLetter();
                     }
                 }, 2000);
             } else {
@@ -614,44 +606,11 @@
             }
         }
 
-        // === 게임 시작 ===
-        function startMiniGame() {
-            gameHearts = 0;
-            showScreen('gameScreen');
-            document.getElementById('score').textContent = `클릭한 하트: 0 / ${maxGameHearts}`;
-            spawnGameHeart();
-        }
-
-        function spawnGameHeart() {
-            if (gameHearts >= maxGameHearts) {
-                setTimeout(showLetter, 1000);
-                return;
-            }
-
-            const gameArea = document.getElementById('gameArea');
-            const heart = document.createElement('div');
-            heart.className = 'clickable-heart';
-            heart.textContent = '💖';
-            heart.style.left = Math.random() * 80 + '%';
-            heart.style.top = Math.random() * 70 + '%';
-            heart.style.animationDelay = Math.random() * 0.5 + 's';
-            
-            heart.onclick = function() {
-                gameHearts++;
-                document.getElementById('score').textContent = `클릭한 하트: ${gameHearts} / ${maxGameHearts}`;
-                this.remove();
-                createHearts();
-                spawnGameHeart();
-            };
-            
-            gameArea.appendChild(heart);
-        }
-
         // === 최종 편지 ===
         function showLetter() {
             showScreen('finalLetterScreen');
             
-            const text = "사랑해!";
+            const text = "발렌타인데이라서 내가 이거 깃허브로 만들어봐쪄\n친구들이랑 재밌게 놀고 나랑은 내일 보자아앙 사룽해!!";
             const letterContent = document.getElementById('letterContent');
             let index = 0;
             
@@ -667,7 +626,7 @@
                     createHearts();
                     setInterval(createHearts, 2000);
                 }
-            }, 200);
+            }, 80);
         }
 
         // === 초기 애니메이션 ===
