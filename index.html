@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>위창 오빠에게 💝</title>
+    <title>유정이의 발렌타인데이 선물!!💝</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
@@ -450,6 +450,93 @@
             50% { transform: scale(1.1); }
         }
 
+        /* 쿠폰 스타일 */
+        .coupon {
+            background: linear-gradient(135deg, #fff5f8 0%, #ffe8f0 100%);
+            border: 3px dashed #ff69b4;
+            border-radius: 20px;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coupon::before,
+        .coupon::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe8f5 50%, #ffd4ed 100%);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .coupon::before { left: -15px; }
+        .coupon::after { right: -15px; }
+
+        .coupon-header {
+            font-size: 0.85rem;
+            color: #ff8fab;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+
+        .coupon-title {
+            font-size: 1.8rem;
+            color: #d4456a;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .coupon-amount {
+            font-size: 3rem;
+            color: #c1272d;
+            font-weight: bold;
+            margin: 5px 0;
+            text-shadow: 2px 2px 0 rgba(193, 39, 45, 0.1);
+        }
+
+        .coupon-desc {
+            font-size: 1rem;
+            color: #666;
+            margin: 10px 0 15px;
+        }
+
+        .coupon-divider {
+            border: none;
+            border-top: 2px dashed #ffb6c1;
+            margin: 15px 0;
+        }
+
+        .coupon-barcode {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 2px;
+            height: 50px;
+            margin: 10px auto;
+            max-width: 200px;
+        }
+
+        .coupon-barcode div {
+            flex-shrink: 0;
+        }
+
+        .coupon-barcode-num {
+            font-size: 0.8rem;
+            color: #666;
+            letter-spacing: 3px;
+            margin-top: 5px;
+        }
+
+        .coupon-footer {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-top: 10px;
+        }
+
         #ytPlayer {
             position: fixed;
             top: -9999px;
@@ -495,6 +582,23 @@
             <div id="feedback"></div>
         </div>
 
+        <!-- 쿠폰 화면 -->
+        <div id="couponScreen" class="screen">
+            <h1>축하해요! 퀴즈 올클리어! 🎉</h1>
+            <div class="coupon" id="couponCard">
+                <div class="coupon-header">♥ VALENTINE'S DAY SPECIAL COUPON ♥</div>
+                <div class="coupon-title">💋 뽀뽀 쿠폰 💋</div>
+                <div class="coupon-amount">× 500회</div>
+                <div class="coupon-desc">본 쿠폰 소지자는 유정이에게<br>뽀뽀 500번을 받을 수 있습니다</div>
+                <hr class="coupon-divider">
+                <div class="coupon-barcode" id="barcode"></div>
+                <div class="coupon-barcode-num">2025 0214 0500</div>
+                <div class="coupon-footer">유효기간: 영원히 ♥ | 양도 불가 | 위창 오빠 전용</div>
+            </div>
+            <button onclick="downloadCouponPDF()">이미지로 저장하기 📥</button>
+            <button onclick="showLetter()">다음으로 💌</button>
+        </div>
+
         <!-- 최종 편지 화면 -->
         <div id="finalLetterScreen" class="screen">
             <div class="letter">
@@ -505,6 +609,7 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         // === YouTube BGM ===
         let ytPlayer = null;
@@ -592,7 +697,7 @@
                     "킷캣"
                 ],
                 correct: 1,
-                message: "정답입니다아앙 근데 이제 토플론도 좋아짐🥰"
+                message: "정답입니다아앙 근데 이제 토블론도 좋아짐🥰"
             }
         ];
 
@@ -719,7 +824,7 @@
                     if (currentQuestion < quiz.length) {
                         showQuestion();
                     } else {
-                        showLetter();
+                        showCoupon();
                     }
                 }, 2000);
             } else {
@@ -810,6 +915,76 @@
                 
                 setTimeout(() => heart.remove(), 3000);
             }
+        }
+
+        // === 쿠폰 화면 ===
+        function showCoupon() {
+            showScreen('couponScreen');
+            celebrateCorrect();
+            generateBarcode();
+        }
+
+        function generateBarcode() {
+            const barcode = document.getElementById('barcode');
+            if (barcode.children.length > 0) return;
+
+            // EAN-13 스타일 바코드 패턴 (검정 바 + 흰 간격 교차)
+            const pattern = [
+                3,1,1,2, 2,1,1,3, 1,2,2,1, 3,1,1,2, 1,1,3,2,
+                1,1,1,1, // 가운데 구분선
+                2,1,3,1, 1,2,1,3, 2,1,1,2, 3,1,2,1, 1,3,1,2
+            ];
+            let isBar = true;
+            pattern.forEach(w => {
+                const el = document.createElement('div');
+                el.style.width = w + 'px';
+                el.style.height = '45px';
+                el.style.background = isBar ? '#333' : 'transparent';
+                barcode.appendChild(el);
+                isBar = !isBar;
+            });
+        }
+
+        function downloadCouponPDF() {
+            const coupon = document.getElementById('couponCard');
+            html2canvas(coupon, {
+                scale: 3,
+                backgroundColor: null,
+                useCORS: true
+            }).then(srcCanvas => {
+                // 16:9 비율 캔버스 (아이폰 가로 기준)
+                const targetW = 1920;
+                const targetH = 1080;
+                const finalCanvas = document.createElement('canvas');
+                finalCanvas.width = targetW;
+                finalCanvas.height = targetH;
+                const ctx = finalCanvas.getContext('2d');
+
+                // 배경 그라데이션
+                const grad = ctx.createLinearGradient(0, 0, targetW, targetH);
+                grad.addColorStop(0, '#ffeef8');
+                grad.addColorStop(0.5, '#ffe8f5');
+                grad.addColorStop(1, '#ffd4ed');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, targetW, targetH);
+
+                // 쿠폰을 중앙에 배치 (여백 포함 비율 맞춤)
+                const maxW = targetW * 0.75;
+                const maxH = targetH * 0.7;
+                const scale = Math.min(maxW / srcCanvas.width, maxH / srcCanvas.height);
+                const w = srcCanvas.width * scale;
+                const h = srcCanvas.height * scale;
+                const x = (targetW - w) / 2;
+                const y = (targetH - h) / 2;
+
+                ctx.drawImage(srcCanvas, x, y, w, h);
+
+                // 이미지로 다운로드
+                const link = document.createElement('a');
+                link.download = 'valentine-coupon.png';
+                link.href = finalCanvas.toDataURL('image/png');
+                link.click();
+            });
         }
 
         // === 최종 편지 ===
