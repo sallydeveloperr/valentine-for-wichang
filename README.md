@@ -1,6 +1,5 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=ff69b4&height=150&section=header&text=발렌타인데이%20선물%20웹페이지&fontSize=42&fontColor=ffffff" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=ff69b4&height=180&section=header&text=💝발렌타인데이%20선물%20웹페이지💝&fontSize=42&fontColor=ffffff" />
 
-# 💝 발렌타인데이 선물 웹페이지! 귀여운 토이 프로젝트
 
 발렌타인데이를 맞아 특별한 사람을 위해 만든 인터랙티브 웹 선물입니다.
 
