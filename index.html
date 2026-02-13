@@ -40,14 +40,6 @@
             overflow: hidden;
         }
 
-        .container::before {
-            content: '💕';
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 2rem;
-            opacity: 0.3;
-        }
 
         .screen {
             display: none;
@@ -323,6 +315,7 @@
             text-align: center;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             animation: letter-pop 0.6s ease;
+            overflow: hidden;
         }
 
         @keyframes letter-pop {
@@ -395,7 +388,6 @@
         }
 
         .no-btn:hover {
-            transform: translateX(50px);
             background: #f5f5f5;
         }
         .toast {
@@ -724,36 +716,71 @@
             document.getElementById('letterButtons').style.display = 'none';
             document.getElementById('letterMessage').textContent = '좋아! 그럼 우리 퀴즈 시작할까? 💕';
             document.getElementById('catImage').src = 'cat_heart.gif';
-            
-            setTimeout(() => {
-                currentQuestion = 0;
-                showScreen('quizScreen');
-                showQuestion();
-            }, 1500);
+
+            // 3, 2, 1 카운트다운
+            let count = 3;
+            const countdownEl = document.createElement('div');
+            countdownEl.style.cssText = 'font-size:3rem;font-weight:bold;color:#c1272d;margin-top:15px;';
+            countdownEl.textContent = count;
+            document.querySelector('.envelope-letter').appendChild(countdownEl);
+
+            const countdownInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countdownEl.textContent = count;
+                } else {
+                    clearInterval(countdownInterval);
+                    countdownEl.remove();
+                    currentQuestion = 0;
+                    showScreen('quizScreen');
+                    showQuestion();
+                }
+            }, 1000);
         });
 
         // === NO 버튼: 도망 효과 (모바일 터치 전용) ===
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
 
+        // 버튼의 원래 위치를 저장 (최초 1회)
+        let noBtnOrigin = null;
+        function getNoBtnOrigin() {
+            if (!noBtnOrigin) {
+                const r = noBtn.getBoundingClientRect();
+                noBtnOrigin = { left: r.left, top: r.top, width: r.width, height: r.height };
+            }
+            return noBtnOrigin;
+        }
+
         function dodgeNoButton() {
             noClickCount++;
             const container = noBtn.closest('.envelope-letter');
-            const rect = container.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            const origin = getNoBtnOrigin();
 
-            // 컨테이너 안에서 랜덤 위치로 순간이동
-            const maxX = rect.width - 80;
-            const maxY = rect.height - 50;
-            const newX = (Math.random() - 0.5) * maxX;
-            const newY = (Math.random() - 0.5) * maxY;
+            // 점점 작아지기
+            const scale = Math.max(0.3, 1 - noClickCount * 0.06);
+            const btnWidth = origin.width * scale;
+            const btnHeight = origin.height * scale;
+
+            // 패딩을 고려한 컨테이너 내부 영역 계산
+            const padding = 10;
+            const minX = containerRect.left + padding;
+            const minY = containerRect.top + padding;
+            const maxX = containerRect.right - btnWidth - padding;
+            const maxY = containerRect.bottom - btnHeight - padding;
+
+            // 컨테이너 내부에서 랜덤 절대 위치 → 원래 위치 기준 translate 계산
+            const targetX = minX + Math.random() * Math.max(0, maxX - minX);
+            const targetY = minY + Math.random() * Math.max(0, maxY - minY);
+            const translateX = targetX - origin.left;
+            const translateY = targetY - origin.top;
 
             noBtn.style.position = 'relative';
             noBtn.style.transition = 'all 0.15s ease';
             noBtn.style.zIndex = '10';
 
-            // 점점 작아지기
-            const scale = Math.max(0.4, 1 - noClickCount * 0.06);
-            noBtn.style.transform = `translate(${newX}px, ${newY}px) scale(${scale})`;
+            noBtn.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
 
             // YES 버튼은 점점 커지기
             const yesScale = Math.min(1.5, 1 + noClickCount * 0.05);
@@ -952,32 +979,104 @@
                 backgroundColor: null,
                 useCORS: true
             }).then(srcCanvas => {
-                // 16:9 비율 캔버스 (아이폰 가로 기준)
-                const targetW = 1920;
-                const targetH = 1080;
+                // 9:16 세로 비율 (아이폰 세로 기준)
+                const targetW = 1080;
+                const targetH = 1920;
                 const finalCanvas = document.createElement('canvas');
                 finalCanvas.width = targetW;
                 finalCanvas.height = targetH;
                 const ctx = finalCanvas.getContext('2d');
 
                 // 배경 그라데이션
-                const grad = ctx.createLinearGradient(0, 0, targetW, targetH);
-                grad.addColorStop(0, '#ffeef8');
-                grad.addColorStop(0.5, '#ffe8f5');
-                grad.addColorStop(1, '#ffd4ed');
+                const grad = ctx.createLinearGradient(0, 0, 0, targetH);
+                grad.addColorStop(0, '#fff0f5');
+                grad.addColorStop(0.3, '#ffe4ef');
+                grad.addColorStop(0.7, '#ffd6e8');
+                grad.addColorStop(1, '#ffc8e0');
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, targetW, targetH);
 
-                // 쿠폰을 중앙에 배치 (여백 포함 비율 맞춤)
-                const maxW = targetW * 0.75;
-                const maxH = targetH * 0.7;
+                // 상단 장식 하트들
+                ctx.font = '60px serif';
+                ctx.globalAlpha = 0.12;
+                const decoHearts = ['💕', '💗', '💖', '💝', '✨'];
+                for (let i = 0; i < 25; i++) {
+                    const emoji = decoHearts[Math.floor(Math.random() * decoHearts.length)];
+                    const dx = Math.random() * targetW;
+                    const dy = Math.random() * targetH;
+                    ctx.font = (30 + Math.random() * 50) + 'px serif';
+                    ctx.fillText(emoji, dx, dy);
+                }
+                ctx.globalAlpha = 1;
+
+                // 상단 타이틀 영역
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#c1272d';
+                ctx.font = 'bold 52px sans-serif';
+                ctx.fillText('Happy Valentine\'s Day', targetW / 2, 200);
+
+                ctx.fillStyle = '#ff69b4';
+                ctx.font = '36px sans-serif';
+
+                // 장식 라인
+                ctx.strokeStyle = '#ffb6c1';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([8, 6]);
+                ctx.beginPath();
+                ctx.moveTo(100, 300);
+                ctx.lineTo(targetW - 100, 300);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // 쿠폰 카드를 중앙에 배치
+                const cardPadding = 60;
+                const maxW = targetW - cardPadding * 2;
+                const maxH = targetH * 0.45;
                 const scale = Math.min(maxW / srcCanvas.width, maxH / srcCanvas.height);
                 const w = srcCanvas.width * scale;
                 const h = srcCanvas.height * scale;
                 const x = (targetW - w) / 2;
-                const y = (targetH - h) / 2;
+                const y = 360;
 
+                // 쿠폰 카드 그림자
+                ctx.shadowColor = 'rgba(193, 39, 45, 0.15)';
+                ctx.shadowBlur = 40;
+                ctx.shadowOffsetY = 15;
                 ctx.drawImage(srcCanvas, x, y, w, h);
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetY = 0;
+
+                // 하단 장식 라인
+                const bottomY = y + h + 60;
+                ctx.strokeStyle = '#ffb6c1';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([8, 6]);
+                ctx.beginPath();
+                ctx.moveTo(100, bottomY);
+                ctx.lineTo(targetW - 100, bottomY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // 하단 메시지
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#d4456a';
+                ctx.font = 'bold 40px sans-serif';
+                ctx.fillText('사랑해 위창오빠 💖', targetW / 2, bottomY + 70);
+
+                ctx.fillStyle = '#ff8fab';
+                ctx.font = '28px sans-serif';
+                ctx.fillText('이 쿠폰은 언제든지 사용 가능합니다', targetW / 2, bottomY + 130);
+
+                // 하단 작은 하트 장식
+                ctx.font = '44px serif';
+                ctx.globalAlpha = 0.6;
+                ctx.fillText('💕  💖  💗  💝  💕', targetW / 2, targetH - 120);
+                ctx.globalAlpha = 1;
+
+                ctx.fillStyle = '#ccc';
+                ctx.font = '22px sans-serif';
+                ctx.fillText('2025.02.14', targetW / 2, targetH - 60);
 
                 // 이미지로 다운로드
                 const link = document.createElement('a');
